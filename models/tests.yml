@@ -1,9 +1,37 @@
+
 version: 2
+
+
 
 models:
   - name: orders
+    description: This table contains all the orders and their total amounts merged on from payments table
     columns:
       - name: order_id
+        description: This is the unique identifier of all the orders
         tests:
           - unique
           - not_null
+      - name: customer_id
+        description: This is the unique identifier of all the customers
+        tests:
+          - relationships:
+              to: source('jaffle_shop', 'orders')
+              field: user_id
+
+  - name: customers
+    description: This table contains all the customer information and the total amount they have spent on jaffles
+    columns:
+      - name: customer_id
+        description: This is the unique identifier of all the customers
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: source('jaffle_shop', 'customers')
+              field: id
+      - name: lifetime_value
+        description: This is the total amount the customer spent on all their orders
+        tests:
+          - not_null
+    

@@ -6,24 +6,20 @@ with orders as (
 
 payments as (
 
-    select * from {{ref('stg_payments')}}
+    select  order_id,
+            sum(payment_amount) as order_full_amount
+    from {{ref('stg_payments')}}
+    group by order_id
 
 ),
 
 final as (
 
-    select o.order_id, o.customer_id,
-        sum(p.payment_amount) as order_full_amount,
-        max(o.order_date) as most_recent_order_date,
-        min(o.order_date) as first_order_date,
-        count(o.order_id) as num_payment_methods
-
+    select  o.*,
+            p.order_full_amount
     from orders o
         left join payments p
-            using (order_id)
-        where p.status='success'
-    group by o.order_id, o.customer_id
-    order by o.order_id, o.customer_id
+        on o.order_id = p.order_id
 )
 
 select * from final

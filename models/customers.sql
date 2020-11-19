@@ -22,10 +22,10 @@ customer_orders as (
 final as (
 
     select c.*,
-            coalesce(co.lifetime_value, 0) as lifetime_value
+            coalesce(o.lifetime_value, 0) as lifetime_value
         from customers c
-            left join customer_orders co
-                using (customer_id)
+            left join customer_orders o
+                on c.customer_id = o.customer_id
 
 )
 
